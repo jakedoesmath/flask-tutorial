@@ -7,7 +7,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from flaskr.db import get_db
 
-bp = Blueprint(name, __name__, url_prefix='/auth')
+bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 
 @bp.route('/register', methods=('GET', 'POST'))
@@ -48,13 +48,14 @@ def login():
         db = get_db()
         error = None
         user = db.execute(
-            'SELECT * FROM user WHERE username = ?',
-            (username,)
+            'SELECT * FROM user WHERE username = ?', (username,)
         ).fetchone()
+
+        print(user)
 
         if user is None:
             error = 'Incorrect username.'
-        elif not check_password_hash(user['password'], password):
+        elif not check_password_hash(user[2], password):
             error = 'Incorrect password.'
         
         if error is None:
